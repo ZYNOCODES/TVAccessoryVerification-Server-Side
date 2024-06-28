@@ -14,6 +14,8 @@ const TeleviseurRoutes = require('./route/TeleviseurRoutes');
 const CategorieRoutes = require('./route/CategorieRoutes');
 const AccessoireRoutes = require('./route/AccessoireRoutes');
 const AcceTeleviseurRoutes = require('./route/AcceTeleviseurRoutes');
+const LotRoutes = require('./route/LotRoutes');
+const PhotosRoutes = require('./route/PhotosRoutes');
 
 //http server
 const http = require('http');
@@ -42,6 +44,8 @@ app.use('/televiseur', TeleviseurRoutes);
 app.use('/categorie', CategorieRoutes);
 app.use('/accessoire', AccessoireRoutes);
 app.use('/acceTeleviseur', AcceTeleviseurRoutes);
+app.use('/lot', LotRoutes);
+app.use('/image', PhotosRoutes);
 
 //error handling
 app.use(ErrorHandler);

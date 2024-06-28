@@ -34,7 +34,7 @@ const createTeleviseur = asyncErrorHandler(async (req, res, next) => {
     //check if all feals are filled
     if(
         (!Modele || validator.isEmpty(Modele)) || (!Marque || validator.isEmpty(Marque)) || 
-        (!Categorie || validator.isEmpty(Categorie)) || (!Lot || validator.isEmpty(Lot)) || 
+        (!Categorie || validator.isEmpty(Categorie)) || 
         (!Taille || validator.isEmpty(Taille)) || (!Resolution || validator.isEmpty(Resolution))
     ){
         const err = new CustomError('Tout les champs doit être remplis', 400);
@@ -51,7 +51,6 @@ const createTeleviseur = asyncErrorHandler(async (req, res, next) => {
         modele: Modele, 
         marque: Marque, 
         categorie: Categorie, 
-        lot: Lot, 
         taille: Taille, 
         resolution: Resolution 
     });
@@ -70,7 +69,7 @@ const updateTeleviseur = asyncErrorHandler(async (req, res, next) => {
     if(
         (!id || validator.isEmpty(id)) ||
         ((!Modele || validator.isEmpty(Modele)) && (!Marque || validator.isEmpty(Marque)) && 
-        (!Categorie || validator.isEmpty(Categorie)) && (!Lot || validator.isEmpty(Lot)) && 
+        (!Categorie || validator.isEmpty(Categorie)) && 
         (!Taille || validator.isEmpty(Taille)) && (!Resolution || validator.isEmpty(Resolution)))
     ){
         const err = new CustomError('Un des champs doit être rempli au moins pour mettre à jour ce televiseur', 400);
@@ -86,7 +85,6 @@ const updateTeleviseur = asyncErrorHandler(async (req, res, next) => {
     if(!validator.isEmpty(Modele)) existingTeleviseur.modele = Modele;
     if(!validator.isEmpty(Marque)) existingTeleviseur.marque = Marque;
     if(!validator.isEmpty(Categorie)) existingTeleviseur.categorie = Categorie;
-    if(!validator.isEmpty(Lot)) existingTeleviseur.lot = Lot;
     if(!validator.isEmpty(Taille)) existingTeleviseur.taille = Taille;
     if(!validator.isEmpty(Resolution)) existingTeleviseur.resolution = Resolution;
     //save updated televiseur

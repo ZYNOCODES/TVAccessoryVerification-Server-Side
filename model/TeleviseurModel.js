@@ -21,8 +21,9 @@ const televiseur = sequelize.define('televiseur', {
         allowNull: false,
     },
     lot:{
-        type: DataTypes.STRING,
-        allowNull: false,
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        defaultValue: null,
     },
     taille:{
         type: DataTypes.STRING,

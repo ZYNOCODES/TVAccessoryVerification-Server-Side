@@ -1,31 +1,33 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/Database');
 
-const photos = sequelize.define('photos', {
+const lot = sequelize.define('lot', {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         allowNull: false,
         autoIncrement: true,
     },
-    chemin:{
-        type: DataTypes.STRING,
+    numero:{
+        type: DataTypes.INTEGER,
         allowNull: false,
     },
-    televiseur:{
-        type: DataTypes.INTEGER,
-        allowNull: true,
-        defaultValue: null,
+    startTime:{
+        type: DataTypes.DATE,
+        allowNull: false,
     },
-    accessoire:{
-        type: DataTypes.INTEGER,
-        allowNull: true,
-        defaultValue: null,
+    endTime:{
+        type: DataTypes.DATE,
+        allowNull: false,
     },
-    
+    taille:{
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 600,
+    },
 },{
     freezeTableName: true,
     timestamps: false,
 });
 
-module.exports = photos;
+module.exports = lot;
