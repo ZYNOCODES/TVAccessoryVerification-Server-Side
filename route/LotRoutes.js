@@ -3,6 +3,7 @@ const {
     createLot,
     findLotById,
     getAllLots,
+    deleteLotById
 } = require('../controller/LotController');
 const router = express.Router();
 const requireAuth = require('../middleware/RequireAuth');
@@ -15,6 +16,7 @@ router.post('/create', createLot);
 router.get('/:id', findLotById);
 //get all lots
 router.get('/', getAllLots);
-
+//delete specific lot by id
+router.delete('/:id', deleteLotById);
 
 module.exports = router;
