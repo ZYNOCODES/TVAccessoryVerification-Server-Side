@@ -30,7 +30,7 @@ const getTeleviseurById = asyncErrorHandler(async (req, res, next) => {
 });
 //create new televiseur
 const createTeleviseur = asyncErrorHandler(async (req, res, next) => {
-    const { Modele, Marque, Categorie, Lot, Taille, Resolution } = req.body;
+    const { Modele, Marque, Categorie, Taille, Resolution } = req.body;
     //check if all feals are filled
     if(
         (!Modele || validator.isEmpty(Modele)) || (!Marque || validator.isEmpty(Marque)) || 
@@ -59,7 +59,7 @@ const createTeleviseur = asyncErrorHandler(async (req, res, next) => {
         const err = new CustomError('Le téléviseur n\'a pas pu être créé, réessayez', 400);
         return next(err);
     }
-    res.status(201).json({message: 'La création a été appliquée avec succès'});
+    res.status(200).json({message: 'La création a été appliquée avec succès'});
 });
 //update televiseur
 const updateTeleviseur = asyncErrorHandler(async (req, res, next) => {

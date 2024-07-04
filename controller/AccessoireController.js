@@ -45,14 +45,14 @@ const createAccessoire = asyncErrorHandler(async (req, res, next) => {
     //create new Accessoire
     const newAccessoire = await Accessoire.create({ 
         nom: Nom, 
-        quantite: (!Quantite || validator.isEmpty(Quantite)) ? Quantite : null
+        quantite: (!Quantite || !validator.isEmpty(Quantite)) ? Quantite : null
     });
     //check if Accessoire was created
     if(!newAccessoire){
         const err = new CustomError('Le accessoire n\'a pas pu être créé, réessayez', 400);
         return next(err);
     }
-    res.status(201).json({message: 'La création a été appliquée avec succès'});
+    res.status(200).json({message: 'La création a été appliquée avec succès'});
 });
 //update Accessoire
 const updateAccessoire = asyncErrorHandler(async (req, res, next) => {

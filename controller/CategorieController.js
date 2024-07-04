@@ -51,7 +51,7 @@ const createCategorie = asyncErrorHandler(async (req, res, next) => {
         const err = new CustomError('Le categorie n\'a pas pu être créé, réessayez', 400);
         return next(err);
     }
-    res.status(201).json({message: 'La création a été appliquée avec succès'});
+    res.status(200).json({message: 'La création a été appliquée avec succès'});
 });
 //update Categorie
 const updateCategorie = asyncErrorHandler(async (req, res, next) => {

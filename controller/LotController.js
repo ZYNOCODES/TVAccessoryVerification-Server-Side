@@ -31,7 +31,14 @@ const createLot = asyncErrorHandler(async (req, res, next) => {
         }
 
         const existingLot = await LotService.findLastLotByTime();
-        if (existingLot && (moment(startTime).isBefore(existingLot.endTime) || moment(endTime).isBefore(existingLot.endTime))) {
+        if (existingLot && 
+            (
+                (moment(startTime).isSameOrAfter(existingLot.startTime) 
+                && moment(startTime).isSameOrBefore(existingLot.endTime))||
+                (moment(endTime).isSameOrAfter(existingLot.startTime) 
+                && moment(endTime).isSameOrBefore(existingLot.endTime))
+            )
+        ) {
             const err = new CustomError('Les dates de début et de fin doivent être après le dernier lot', 400);
             await transaction.rollback();
             return next(err);
@@ -64,7 +71,7 @@ const createLot = asyncErrorHandler(async (req, res, next) => {
             return next(err);
         }
         await transaction.commit();
-        res.status(201).json({ message: 'Lot créé avec succès' });
+        res.status(200).json({ message: 'Lot créé avec succès' });
     } catch (error) {
         const err = new CustomError('Échec de la création du lot, veuillez réessayer', 400);
         await transaction.rollback();
