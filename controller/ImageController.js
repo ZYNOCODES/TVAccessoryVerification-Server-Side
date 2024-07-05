@@ -93,8 +93,58 @@ const deletePhoto = asyncErrorHandler(async (req, res, next) => {
     }
     res.status(200).json({ message: 'Photo supprimée avec succès' });
 });
+//get all photos by id televiseur
+const getAllPhotosByTeleviseurId = asyncErrorHandler(async (req, res, next) => {
+    const { id } = req.params;
+    //check if id is provided
+    if (!id || validator.isEmpty(id)) {
+        const error = new CustomError('ID non fourni', 400);
+        return next(error);
+    }
+    //check if televiseur exists
+    const televiseur = await TeleviseurService.findTeleviseurById(id);
+    if (!televiseur) {
+        const error = new CustomError('Téléviseur introuvable', 404);
+        return next(error);
+    }
+    const photos = await Photos.findAll({ 
+        where: { televiseur: id } 
+    });
+    //check if photos exist
+    if (photos.length <= 0) {
+        const error = new CustomError('Aucune photo trouvée', 404);
+        return next(error);
+    }
+    res.status(200).json(photos);
+});
+//get all photos by id accessoire
+const getAllPhotosByAccessoireId = asyncErrorHandler(async (req, res, next) => {
+    const { id } = req.params;
+    //check if id is provided
+    if (!id || validator.isEmpty(id)) {
+        const error = new CustomError('ID non fourni', 400);
+        return next(error);
+    }
+    //check if accessoire exists
+    const accessoire = await AccessoireService.findAccessoireById(id);
+    if (!accessoire) {
+        const error = new CustomError('Accessoire introuvable', 404);
+        return next(error);
+    }
+    const photos = await Photos.findAll({ 
+        where: { accessoire: id } 
+    });
+    //check if photos exist
+    if (photos.length <= 0) {
+        const error = new CustomError('Aucune photo trouvée', 404);
+        return next(error);
+    }
+    res.status(200).json(photos);
+});
 
 module.exports = {
     uploadAndLinkPhoto,
-    deletePhoto
+    deletePhoto,
+    getAllPhotosByTeleviseurId,
+    getAllPhotosByAccessoireId
 }
