@@ -36,6 +36,11 @@ const createAccessoire = asyncErrorHandler(async (req, res, next) => {
         const err = new CustomError('Tout les champs doit être remplis', 400);
         return next(err);
     }
+    //check if Quantite is a number
+    if(Quantite && !validator.isNumeric(Quantite)){
+        const err = new CustomError('La quantité doit être un nombre', 400);
+        return next(err);
+    }
     //check if Accessoire already exists
     const existingAccessoire = await AccessoireService.findAccessoireByNom(Nom);
     if(existingAccessoire){
