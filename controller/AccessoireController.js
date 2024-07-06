@@ -63,7 +63,7 @@ const updateAccessoire = asyncErrorHandler(async (req, res, next) => {
         (!id || validator.isEmpty(id)) || 
         (
             (!Nom || validator.isEmpty(Nom)) && 
-            (!Quantite || validator.isEmpty(Quantite))
+            (!Quantite || validator.isEmpty(Quantite) || !validator.isNumeric(Quantite))
         )
     ){
         const err = new CustomError('Un des champs doit être rempli au moins pour mettre à jour ce accessoire', 400);

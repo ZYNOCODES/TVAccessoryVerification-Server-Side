@@ -24,22 +24,36 @@ const createLot = asyncErrorHandler(async (req, res, next) => {
     try {
         //check if taille > Televiseur.countwithLotNull
         const televiseurs = await TeleviseurService.getTeleviseursWithLotNull();
-        if (televiseurs.length < taille || taille <= 0) {
+        if (televiseurs.length < taille || taille <= 0 || !validator.isNumeric(taille) ){
             const err = new CustomError('Taille de lot invalide', 400);
             await transaction.rollback();
             return next(err);
         }
 
         const existingLot = await LotService.findLastLotByTime();
-        if (existingLot && 
-            (
-                (moment(startTime).isSameOrAfter(existingLot.startTime) 
-                && moment(startTime).isSameOrBefore(existingLot.endTime))||
-                (moment(endTime).isSameOrAfter(existingLot.startTime) 
-                && moment(endTime).isSameOrBefore(existingLot.endTime))
-            )
-        ) {
-            const err = new CustomError('Les dates de début et de fin doivent être après le dernier lot', 400);
+        
+        if (existingLot) {
+            const existingStart = moment(existingLot.startTime);
+            const existingEnd = moment(existingLot.endTime);
+        
+            const isStartOverlap = newStart.isBetween(existingStart, existingEnd, null, '[]');
+            const isEndOverlap = newEnd.isBetween(existingStart, existingEnd, null, '[]');
+            
+            if (isStartOverlap || isEndOverlap) {
+                const err = new CustomError('Les dates de début et de fin doivent être en dehors du dernier intervalle de temps du lot', 400);
+                await transaction.rollback();
+                return next(err);
+            }
+            
+        }
+
+        const newStart = moment(startTime);
+        const newEnd = moment(endTime);
+    
+        const isReversed = newStart.isSameOrAfter(newEnd);
+        
+        if (isReversed) {
+            const err = new CustomError('Dates de début et de fin incorrectes. tu dois probablement les inverser', 400);
             await transaction.rollback();
             return next(err);
         }
