@@ -34,7 +34,7 @@ app.use('/files', express.static('./files'));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: false }));
 //RateLimiting
-app.use(limiter);
+//app.use(limiter);
 //Sanitize
 app.use(validateRequest);
 

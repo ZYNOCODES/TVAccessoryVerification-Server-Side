@@ -56,7 +56,7 @@ const uploadAndLinkPhoto = asyncErrorHandler(async (req, res, next) => {
             return next(error);
         }
         await transaction.commit();
-        res.status(201).json({ message: 'Images téléchargées avec succès'});
+        res.status(200).json({ message: 'Images téléchargées avec succès'});
     } catch (error) {
         const customError = new CustomError('Les images n\'ont pas pu être téléchargées, réessayez', 400);
         transaction.rollback();

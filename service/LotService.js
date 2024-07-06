@@ -32,9 +32,10 @@ const getLastLotNumber = async () => {
     }
     return numero;
 }
+
 module.exports = {
     findLotById,
     findLotByNumero,
     findLastLotByTime,
-    getLastLotNumber
+    getLastLotNumber,
 }

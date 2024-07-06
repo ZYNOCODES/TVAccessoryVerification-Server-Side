@@ -1,8 +1,11 @@
 const Televiseur = require('../model/TeleviseurModel');
+const Photo = require('../model/PhotosModel');
+const Lot = require('../model/LotModel');
 const CustomError = require('../util/CustomError.js');
 const asyncErrorHandler = require('../util/asyncErrorHandler.js');
 const TeleviseurService = require('../service/TeleviseurService.js');
 const validator = require('validator');
+const sequelize = require('../config/Database.js');
 
 //get all televiseurs
 const getAllTeleviseurs = asyncErrorHandler(async (req, res, next) => {
@@ -97,28 +100,66 @@ const updateTeleviseur = asyncErrorHandler(async (req, res, next) => {
     //return successfully updated televiseur message
     res.status(200).json({ message: 'La mise à jour a été appliquée avec succès' });
 });
-//delete televiseur
 const deleteTeleviseur = asyncErrorHandler(async (req, res, next) => {
     const { id } = req.params;
-    //check if all fields are filled
-    if(!id || validator.isEmpty(id)){
+
+    // Check if id is provided
+    if (!id || validator.isEmpty(id)) {
         const err = new CustomError('Un des champs doit être rempli au moins pour supprimer ce téléviseur', 400);
         return next(err);
     }
-    //check if televiseur exists
+
+    // Check if televiseur exists
     const existingTeleviseur = await TeleviseurService.findTeleviseurById(id);
-    if(!existingTeleviseur){
+    if (!existingTeleviseur) {
         const err = new CustomError('Téléviseur introuvable', 404);
         return next(err);
     }
-    //delete televiseur
-    const deletedTeleviseur = await existingTeleviseur.destroy();
-    //check if televiseur was deleted
-    if(!deletedTeleviseur){
-        const err = new CustomError('Le téléviseur n\'a pas pu être supprimé, réessayez', 400);
+
+    const transaction = await sequelize.transaction();
+
+    try {
+        
+        // Delete existing images related to this televiseur
+        const deletedImages = await Photo.destroy({
+            where: {
+                televiseur: id
+            },
+            transaction: transaction
+        });
+        if (deletedImages < 0) {
+            const err = new CustomError('Le téléviseur n\'a pas pu être supprimé, réessayez', 404);
+            throw err;
+        }
+        // Update lot taille
+        const updatedLot = await Lot.decrement('taille', {
+            by: 1,
+            where: {
+                numero: existingTeleviseur.lot
+            },
+            transaction: transaction
+        });
+        if (!updatedLot) {
+            const err = new CustomError('Le téléviseur n\'a pas pu être supprimé, réessayez', 404);
+            throw err;
+        }
+
+        // Delete televiseur
+        const deletedTeleviseur = await existingTeleviseur.destroy({ transaction });
+        if (!deletedTeleviseur) {
+            const err = new CustomError('Le téléviseur n\'a pas pu être supprimé, réessayez', 400);
+            throw err;
+        }
+
+        // Commit the transaction
+        await transaction.commit();
+
+        res.status(200).json({ message: 'La suppression a été appliquée avec succès' });
+    } catch (err) {
+        // Rollback the transaction if any error occurred
+        await transaction.rollback();
         return next(err);
     }
-    res.status(200).json({ message: 'La suppression a été appliquée avec succès' });
 });
 
 module.exports = {
