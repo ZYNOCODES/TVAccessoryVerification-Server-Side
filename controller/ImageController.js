@@ -73,15 +73,26 @@ const deletePhoto = asyncErrorHandler(async (req, res, next) => {
         return next(error);
     }
     const filePath = `${__dirname}/../files/${photo.chemin}`;
-
-    // Delete photo from storage
-    await fs.unlink(filePath);
-    // Check if photo was deleted from storage (this check is generally unnecessary if unlink doesn't throw an error)
-    const exists = await fs.access(filePath).then(() => true).catch(() => false);
-    if (exists) {
-        const error = new CustomError('La photo n\'a pas pu être supprimée, réessayez', 400);
-        return next(error);
+    try {
+        // Check if file exists before attempting to delete
+        await fs.access(filePath);
+    } catch (error) {
+        const err = new CustomError('La photo n\'existe pas', 404);
+        //delete photo
+        await Photos.destroy({ 
+            where: { id } 
+        });
+        return next(err);
     }
+
+    try {
+        // Delete photo from storage
+        await fs.unlink(filePath);
+    } catch (error) {
+        const err = new CustomError('La photo n\'a pas pu être supprimée, réessayez', 400);
+        return next(err);
+    }
+
     //delete photo
     const deleted = await Photos.destroy({ 
         where: { id } 
