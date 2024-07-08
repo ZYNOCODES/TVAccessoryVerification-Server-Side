@@ -1,4 +1,5 @@
 const AcceTeleviseur = require('../model/AcceTeleviseurModel');
+const { Op } = require('sequelize');
 
 //get specific AcceTeleviseur by id
 const findAcceTeleviseurById = async (id) => {
@@ -6,10 +7,12 @@ const findAcceTeleviseurById = async (id) => {
 }
 //get specific AcceTeleviseur by Nom
 const findAcceTeleviseurByTeleviseurAndAccessoire = async (Televiseur, Accessoire) => {
-    return await AcceTeleviseur.findOne({
+    return await AcceTeleviseur.findAll({
         where: {
             televiseur: Televiseur,
-            accessoire: Accessoire
+            accessoire: {
+                [Op.in]: Accessoire
+            }
         }
     });
 }

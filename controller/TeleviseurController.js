@@ -1,6 +1,7 @@
 const Televiseur = require('../model/TeleviseurModel');
 const Photo = require('../model/PhotosModel');
 const Lot = require('../model/LotModel');
+const AcceTeleviseurModel = require('../model/AcceTeleviseurModel.js');
 const CustomError = require('../util/CustomError.js');
 const asyncErrorHandler = require('../util/asyncErrorHandler.js');
 const TeleviseurService = require('../service/TeleviseurService.js');
@@ -128,6 +129,17 @@ const deleteTeleviseur = asyncErrorHandler(async (req, res, next) => {
             transaction: transaction
         });
         if (deletedImages < 0) {
+            const err = new CustomError('Le téléviseur n\'a pas pu être supprimé, réessayez', 404);
+            throw err;
+        }
+        // Delete existing accessorys related to this televiseur
+        const deletedAccessorys = await AcceTeleviseurModel.destroy({
+            where: {
+                televiseur: id
+            },
+            transaction: transaction
+        });
+        if (deletedAccessorys < 0) {
             const err = new CustomError('Le téléviseur n\'a pas pu être supprimé, réessayez', 404);
             throw err;
         }

@@ -30,6 +30,7 @@ const server = http.createServer(app);
 app.use(cors());
 //static files
 app.use('/files', express.static('./files'));
+app.use(express.static("./public/build"));
 //body parser
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: false }));
@@ -50,6 +51,11 @@ app.use('/image', PhotosRoutes);
 //error handling
 app.use(ErrorHandler);
 
+app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "public","build", "index.html"));
+});
+
+  
 // Disable logging of SQL queries
 sequelize.options.logging = false;
 //connect to db
